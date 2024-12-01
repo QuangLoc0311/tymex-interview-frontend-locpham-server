@@ -1,5 +1,7 @@
-// path/to/server.js
+require('dotenv').config();
+
 const express = require('express');
+const axios = require('axios');
 const fs = require('fs');
 const app = express();
 const PORT = 5005;
@@ -7,37 +9,34 @@ const PORT = 5005;
 // Middleware to parse JSON
 app.use(express.json());
 
+const dbUrl = process.env.DB_URL;
+
 app.get('/api/categories-themes', (req, res) => {
-  // Read the db.json file
-  fs.readFile('db.json', 'utf8', (err, data) => {
-      if (err) {
-          return res.status(500).send('Error reading database');
-      }
-
-      const products = JSON.parse(data).products;
-
+    // Read the db.json file
+    axios.get(dbUrl).then(response => {
+      // Check if response.data is already an object
+      const products = response.data.products;
+  
       // Extract unique categories
       const categories = [...new Set(products.map(product => product.category))];
-
+  
       // Extract unique themes
       const themes = [...new Set(products.map(product => product.theme))];
-
+  
       res.json({
           categories,
           themes
       });
+    }).catch(err => {
+      console.error('Error fetching data:', err); // Log the error for debugging
+      res.status(500).send('Error fetching data'); // Send a generic error message
+    });
   });
-});
 
 app.get('/api/products', (req, res) => {
   // Read the db.json file
-  fs.readFile('db.json', 'utf8', (err, data) => {
-      if (err) {
-          return res.status(500).send('Error reading database');
-      }
-
-      const products = JSON.parse(data).products;
-
+  axios.get(dbUrl).then(response => {
+      const products = response.data.products;
       // Filtering
       let filteredProducts = products;
       if (req.query.category) {
@@ -110,7 +109,8 @@ app.get('/api/products', (req, res) => {
           total: filteredProducts.length,
           products: paginatedProducts
       });
-  });
+
+  }).catch(err => res.status(500).send(err));
 });
 
 app.listen(PORT, () => {
