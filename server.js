@@ -3,11 +3,14 @@ require('dotenv').config();
 const express = require('express');
 const axios = require('axios');
 const fs = require('fs');
+const cors = require('cors');
+
 const app = express();
 const PORT = 5005;
 
 // Middleware to parse JSON
 app.use(express.json());
+app.use(cors());
 
 const dbUrl = process.env.DB_URL;
 
