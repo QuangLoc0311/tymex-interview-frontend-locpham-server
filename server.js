@@ -106,10 +106,8 @@ app.get('/api/products', (req, res) => {
       // Last Item Logic
       const lastItemId = req.query.lastItemId;
       if (lastItemId) {
-          const lastItemIndex = filteredProducts.findIndex(product => product.id === lastItemId);
-          if (lastItemIndex !== -1) {
-              filteredProducts = filteredProducts.slice(lastItemIndex + 1);
-          }
+          // Filter products to only include those with an ID greater than lastItemId
+          filteredProducts = filteredProducts.filter(product => product.id > lastItemId);
       }
 
       // Limit the number of results
