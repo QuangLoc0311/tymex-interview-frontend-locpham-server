@@ -56,6 +56,9 @@ app.get('/api/products', (req, res) => {
       if (req.query.tier) {
         filteredProducts = filteredProducts.filter(product => product.tier === req.query.tier);
       }
+      if (req.query.theme) { // Add this condition
+        filteredProducts = filteredProducts.filter(product => product.theme === req.query.theme);
+       }
 
       // Unified Search for Title and Author Name
       if (req.query.search) {
