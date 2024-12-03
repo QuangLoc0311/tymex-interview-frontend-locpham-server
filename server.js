@@ -14,7 +14,7 @@ app.use(cors());
 
 const dbUrl = process.env.DB_URL;
 
-app.get('/api/categories-themes', (req, res) => {
+app.get('/api/metadata', (req, res) => {
     // Read the db.json file
     axios.get(dbUrl).then(response => {
       // Check if response.data is already an object
@@ -25,10 +25,12 @@ app.get('/api/categories-themes', (req, res) => {
   
       // Extract unique themes
       const themes = [...new Set(products.map(product => product.theme))];
-  
+      const tiers = [...new Set(products.map(product => product.tier))];
+
       res.json({
           categories,
-          themes
+          themes,
+          tiers
       });
     }).catch(err => {
       console.error('Error fetching data:', err); // Log the error for debugging
@@ -50,6 +52,9 @@ app.get('/api/products', (req, res) => {
       }
       if (req.query.maxPrice) {
           filteredProducts = filteredProducts.filter(product => product.price <= req.query.maxPrice);
+      }
+      if (req.query.tier) {
+        filteredProducts = filteredProducts.filter(product => product.tier === req.query.tier);
       }
 
       // Unified Search for Title and Author Name
