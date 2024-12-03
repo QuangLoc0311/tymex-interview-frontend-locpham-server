@@ -83,7 +83,7 @@ app.get('/api/products', (req, res) => {
                   let comparison = 0;
 
                   if (criterion === 'price') {
-                      comparison = a.price - b.price; // Ascending order by price
+                      comparison = Number(a.price) - Number(b.price); // Ensure price is treated as a number
                   } else if (criterion === 'createdAt') {
                       comparison = new Date(a.createdAt) - new Date(b.createdAt); // Ascending order by createdAt
                   } else if (criterion === 'title') {
